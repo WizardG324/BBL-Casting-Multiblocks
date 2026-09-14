@@ -481,6 +481,10 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                 BlockEntity be = level.getBlockEntity(pos);
                 if (be instanceof MBSolidifierBlockEntity solidifier) {
                     solidifier.setController(this);
+                } else if (be instanceof MBInterfaceBlockEntity mbInterface) {
+                    mbInterface.setController(this);
+                } else if (be instanceof MBMixerBlockEntity mixer) {
+                    mixer.setController(this);
                 } else if (be instanceof MBTankBlockEntity) {
                     tankPositions.add(pos);
                 }

@@ -2,6 +2,8 @@
   "block.castingmb.mb_black_brick_glass": "Multiblock Black Brick Glass",
   "block.castingmb.mb_black_bricks": "Multiblock Black Bricks",
   "block.castingmb.mb_controller": "Casting Multiblock Controller",
+  "block.castingmb.mb_interface": "Multiblock Interface (BETA)",
+  "block.castingmb.mb_mixer": "Multiblock Mixer (BETA)",
   "block.castingmb.mb_regulator": "Multiblock Regulator",
   "block.castingmb.mb_solidifier": "Casting Multiblock Solidifier",
   "block.castingmb.mb_tank": "Casting Multiblock Tank",

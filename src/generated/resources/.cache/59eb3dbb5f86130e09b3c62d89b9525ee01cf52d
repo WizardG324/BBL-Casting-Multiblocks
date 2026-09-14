@@ -1,7 +1,9 @@
-// 26.1.2	2026-09-11T13:30:15.4718658	Loot Tables
+// 26.1.2	2026-09-14T15:36:22.9137342	Loot Tables
 ed1eeb6a3ed72074b17e4ea0dc5705602d8a3021 data/castingmb/loot_table/blocks/mb_black_bricks.json
 97defcbc3de8bf6b860b8f9b6514017505adca46 data/castingmb/loot_table/blocks/mb_black_brick_glass.json
 445fe81ebcadd2d496728c5ed4b8fe4c06daf222 data/castingmb/loot_table/blocks/mb_controller.json
+7e6dd04651da6cd746bec4a391770ae4bd07665d data/castingmb/loot_table/blocks/mb_interface.json
+93ba0041ffd48b0c558cd9af0f84bdae5bd5c19d data/castingmb/loot_table/blocks/mb_mixer.json
 60f21be0e70024d0daf406fdc7d38de45adb75b4 data/castingmb/loot_table/blocks/mb_regulator.json
 85ef9eab11d6c62006c0b924e51172481ff74bfd data/castingmb/loot_table/blocks/mb_solidifier.json
 969e02a99099d747c0c45cf1fb1b8b91c5519aab data/castingmb/loot_table/blocks/mb_tank.json

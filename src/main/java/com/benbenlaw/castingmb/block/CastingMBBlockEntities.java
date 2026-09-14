@@ -3,6 +3,8 @@ package com.benbenlaw.castingmb.block;
 import com.benbenlaw.casting.block.entity.ControllerBlockEntity;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.entity.MBControllerBlockEntity;
+import com.benbenlaw.castingmb.block.entity.MBInterfaceBlockEntity;
+import com.benbenlaw.castingmb.block.entity.MBMixerBlockEntity;
 import com.benbenlaw.castingmb.block.entity.MBSolidifierBlockEntity;
 import com.benbenlaw.castingmb.block.entity.MBTankBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,5 +28,13 @@ public class CastingMBBlockEntities {
     public static final Supplier<BlockEntityType<MBTankBlockEntity>> MB_TANK_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("mb_tank_block_entity", () ->
                     new BlockEntityType<>(MBTankBlockEntity::new, CastingMBBlocks.MB_TANK.get()));
+
+    public static final Supplier<BlockEntityType<MBInterfaceBlockEntity>> MB_INTERFACE_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("mb_interface_block_entity", () ->
+                    new BlockEntityType<>(MBInterfaceBlockEntity::new, CastingMBBlocks.MB_INTERFACE.get()));
+
+    public static final Supplier<BlockEntityType<MBMixerBlockEntity>> MB_MIXER_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("mb_mixer_block_entity", () ->
+                    new BlockEntityType<>(MBMixerBlockEntity::new, CastingMBBlocks.MB_MIXER.get()));
 
 }

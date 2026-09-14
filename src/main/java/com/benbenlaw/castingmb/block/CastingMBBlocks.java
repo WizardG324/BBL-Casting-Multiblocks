@@ -5,6 +5,8 @@ import com.benbenlaw.casting.block.custom.ControllerBlock;
 import com.benbenlaw.casting.item.CastingItems;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.custom.MBControllerBlock;
+import com.benbenlaw.castingmb.block.custom.MBInterfaceBlock;
+import com.benbenlaw.castingmb.block.custom.MBMixerBlock;
 import com.benbenlaw.castingmb.block.custom.MBSolidifierBlock;
 import com.benbenlaw.castingmb.block.custom.MBTankBlock;
 import com.benbenlaw.castingmb.item.CastingMBItems;
@@ -55,6 +57,18 @@ public class CastingMBBlocks {
 
     public static final DeferredBlock<Block> MB_TANK = registerBlock("mb_tank",
         properties -> new MBTankBlock(properties
+                .strength(1.0F)
+                .requiresCorrectToolForDrops()
+                .noOcclusion()));
+
+    public static final DeferredBlock<Block> MB_INTERFACE = registerBlock("mb_interface",
+        properties -> new MBInterfaceBlock(properties
+                .strength(1.0F)
+                .requiresCorrectToolForDrops()
+                .noOcclusion()));
+
+    public static final DeferredBlock<Block> MB_MIXER = registerBlock("mb_mixer",
+        properties -> new MBMixerBlock(properties
                 .strength(1.0F)
                 .requiresCorrectToolForDrops()
                 .noOcclusion()));

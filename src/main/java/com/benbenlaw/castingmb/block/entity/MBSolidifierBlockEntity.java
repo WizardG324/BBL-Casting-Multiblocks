@@ -3,6 +3,7 @@ package com.benbenlaw.castingmb.block.entity;
 import com.benbenlaw.casting.block.custom.CastingBlock;
 import com.benbenlaw.casting.block.entity.FluidAccepting;
 import com.benbenlaw.casting.block.entity.TankBlockEntity;
+import com.benbenlaw.casting.config.CastingConfig;
 import com.benbenlaw.casting.item.CastingDataComponents;
 import com.benbenlaw.casting.item.util.FluidListComponent;
 import com.benbenlaw.casting.recipe.custom.SolidifierRecipe;
@@ -57,7 +58,7 @@ import java.util.OptionalInt;
 public class MBSolidifierBlockEntity extends SyncableBlockEntity implements MenuProvider, FluidAccepting {
 
     private final ContainerData data;
-    private int maxProgress = 200;
+    private int maxProgress = CastingConfig.defaultSolidifierSpeed.get();
     private int progress = 0;
     private OptionalInt temperature = OptionalInt.empty();
     private BlockPos lastSyncedFuelTankPos;

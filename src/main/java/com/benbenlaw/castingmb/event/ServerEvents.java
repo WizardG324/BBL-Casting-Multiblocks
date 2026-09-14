@@ -41,6 +41,13 @@ public class ServerEvents {
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, CastingMBBlockEntities.MB_TANK_BLOCK_ENTITY.get(),
                 (blockEntity, side) -> blockEntity.getFluidHandler());
 
+        //MB Interface
+        event.registerBlockEntity(Capabilities.Item.BLOCK, CastingMBBlockEntities.MB_INTERFACE_BLOCK_ENTITY.get(),
+                (blockEntity, side) -> blockEntity.getItemHandler());
+
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, CastingMBBlockEntities.MB_INTERFACE_BLOCK_ENTITY.get(),
+                (blockEntity, side) -> blockEntity.getFluidHandler());
+
     }
 
     @SubscribeEvent

@@ -33,6 +33,8 @@ public class CastingMBBlockTags extends BlockTagsProvider {
                 .add(CastingMBBlocks.MB_TANK.get())
                 .add(CastingMBBlocks.MB_BLACK_BRICKS.get())
                 .add(CastingMBBlocks.MB_REGULATOR.get())
+                .add(CastingMBBlocks.MB_INTERFACE.get())
+                .add(CastingMBBlocks.MB_MIXER.get())
         ;
 
         tag(CastingMBTags.Blocks.CONTROLLER_FLOORS)
@@ -50,6 +52,8 @@ public class CastingMBBlockTags extends BlockTagsProvider {
                 .add(CastingMBBlocks.MB_CONTROLLER.get())
                 .add(CastingMBBlocks.MB_BLACK_BRICK_GLASS.get())
                 .add(CastingMBBlocks.MB_REGULATOR.get())
+                .add(CastingMBBlocks.MB_INTERFACE.get())
+                .add(CastingMBBlocks.MB_MIXER.get())
                 ;
 
         tag(CastingMBTags.Blocks.CONTROLLER_EXTRA_BLOCKS)
@@ -58,6 +62,8 @@ public class CastingMBBlockTags extends BlockTagsProvider {
                 .add(CastingMBBlocks.MB_TANK.get())
                 .add(CastingMBBlocks.MB_CONTROLLER.get())
                 .add(CastingMBBlocks.MB_REGULATOR.get())
+                .add(CastingMBBlocks.MB_INTERFACE.get())
+                .add(CastingMBBlocks.MB_MIXER.get())
         ;
 
     }

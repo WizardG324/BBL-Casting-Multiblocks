@@ -5,6 +5,8 @@
     "castingmb:mb_tank",
     "castingmb:mb_controller",
     "castingmb:mb_black_brick_glass",
-    "castingmb:mb_regulator"
+    "castingmb:mb_regulator",
+    "castingmb:mb_interface",
+    "castingmb:mb_mixer"
   ]
 }

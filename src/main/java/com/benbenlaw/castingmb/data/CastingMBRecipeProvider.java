@@ -16,7 +16,9 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import org.jetbrains.annotations.NotNull;
@@ -75,6 +77,12 @@ public class CastingMBRecipeProvider extends RecipeProvider {
 
         simpleSolidifierRecipe(CastingMBBlocks.MB_BLACK_BRICK_GLASS, getFluidIngredient("molten_black_brick", 2000),
                 CastingBlocks.BLACK_BRICK_GLASS, "black_brick/mb_black_brick_glass", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
+
+        simpleSolidifierRecipe(CastingMBBlocks.MB_INTERFACE, getFluidIngredient("molten_black_brick", 2000),
+                Items.HOPPER, "black_brick/mb_interface", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
+
+        simpleSolidifierRecipe(CastingMBBlocks.MB_MIXER, getFluidIngredient("molten_black_brick", 2000),
+                CastingMBBlocks.MB_TANK, "black_brick/mb_mixer", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
 
         //Entity Melting
         simpleEntityMeltingRecipe(EntityType.SNOW_GOLEM, "chilled_water", 6000, 20, 0.2);

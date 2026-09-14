@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "facing=down,working=false": {
+      "model": "castingmb:block/mb_mixer_vertical",
+      "x": 180
+    },
+    "facing=down,working=true": {
+      "model": "castingmb:block/mb_mixer_working_vertical",
+      "x": 180
+    },
+    "facing=east,working=false": {
+      "model": "castingmb:block/mb_mixer",
+      "y": 90
+    },
+    "facing=east,working=true": {
+      "model": "castingmb:block/mb_mixer_working",
+      "y": 90
+    },
+    "facing=north,working=false": {
+      "model": "castingmb:block/mb_mixer"
+    },
+    "facing=north,working=true": {
+      "model": "castingmb:block/mb_mixer_working"
+    },
+    "facing=south,working=false": {
+      "model": "castingmb:block/mb_mixer",
+      "y": 180
+    },
+    "facing=south,working=true": {
+      "model": "castingmb:block/mb_mixer_working",
+      "y": 180
+    },
+    "facing=up,working=false": {
+      "model": "castingmb:block/mb_mixer_vertical"
+    },
+    "facing=up,working=true": {
+      "model": "castingmb:block/mb_mixer_working_vertical"
+    },
+    "facing=west,working=false": {
+      "model": "castingmb:block/mb_mixer",
+      "y": 270
+    },
+    "facing=west,working=true": {
+      "model": "castingmb:block/mb_mixer_working",
+      "y": 270
+    }
+  }
+}

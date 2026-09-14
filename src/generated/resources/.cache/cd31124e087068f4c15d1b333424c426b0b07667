@@ -1,4 +1,4 @@
-// 26.1.2	2026-09-11T13:30:15.4739136	castingmb Recipes
+// 26.1.2	2026-09-14T16:33:48.6416086	castingmb Recipes
 60b08c05395e5ef690720e89601e582b2fc796dc data/castingmb/advancement/recipes/misc/mb_controller.json
 8cb3860fda19df8e7d4427cdef8d0df6e8d4eed0 data/castingmb/advancement/recipes/misc/mb_tank.json
 774df335117c33229d34458f451ac5ff3bce4ca8 data/castingmb/recipe/mb_controller.json
@@ -9,6 +9,8 @@ d20f764f7e6b4c38211479320a01235a22069646 data/casting/advancement/recipes/entity
 7d7f6bd8c71092aee6141bc79b36c4b324518bf1 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_black_brick.json
 8aceca2d93afe9f5e8427f879079f4fb133c2937 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_black_brick_glass.json
 85ca881ccadcd0e5c236033a5d77cc6e60ca3659 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_controller.json
+c66d25f0d92a9a4b2904bcb1a6cc161e52158f33 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_interface.json
+74f2d29e916f3763d34e04c3d0e00932af21d3c6 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_mixer.json
 364a9a136ebc042e847aa4310d7399ef5d05149d data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_regulator.json
 a5e9fccd7080a97d1c0270566bcf80c751253a38 data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_solidifier.json
 24940864ed56bbac0a2d843a87d15b4a9bc3912b data/casting/advancement/recipes/solidifier/solidifier/black_brick/mb_tank.json
@@ -18,6 +20,8 @@ b43fe4266a2cd54067a24e21a34210cb0a164d77 data/casting/recipe/melting/blaze.json
 c78e3608396a082b83039aea8a6ffea012b5c804 data/casting/recipe/solidifier/black_brick/mb_black_brick.json
 5d581d7a48b3b70dd2bea8423474f9dcad5ffa97 data/casting/recipe/solidifier/black_brick/mb_black_brick_glass.json
 fc6aadd5189c24d9db68b60b1019b46da5a22b3f data/casting/recipe/solidifier/black_brick/mb_controller.json
+a68be59b58c6eba4c573343a6c2a91cfe4889dd9 data/casting/recipe/solidifier/black_brick/mb_interface.json
+87638a999fc1e83394c0664f78c878a3cc2c0f4d data/casting/recipe/solidifier/black_brick/mb_mixer.json
 530846161d1808aab8f6f1cafe05e9f303d9db88 data/casting/recipe/solidifier/black_brick/mb_regulator.json
 f8339a2d040f0d75aa340f9111acdc35d0e4c3aa data/casting/recipe/solidifier/black_brick/mb_solidifier.json
 50203711676d109ad5bfb58a472c15be85d468af data/casting/recipe/solidifier/black_brick/mb_tank.json
