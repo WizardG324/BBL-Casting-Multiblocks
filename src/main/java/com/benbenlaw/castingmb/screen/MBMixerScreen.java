@@ -7,6 +7,7 @@ import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.network.packets.SelectMixerRecipePacket;
 import com.benbenlaw.core.screen.util.FluidRenderingUtils;
 import com.benbenlaw.core.util.MouseUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -116,6 +117,13 @@ public class MBMixerScreen extends AbstractContainerScreen<MBMixerMenu> {
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
+
+        if (event.button() == 0 && MouseUtil.isMouseOver((int) event.x(), (int) event.y(), x + PREVIEW_X, y + PREVIEW_Y, 16, 16)) {
+            if (menu.blockEntity.getSelectedRecipeId() != null) {
+                ClientPacketDistributor.sendToServer(new SelectMixerRecipePacket(null));
+            }
+            return true;
+        }
 
         if (event.button() == 0 && event.x() >= (x + 105) && event.x() < (x + 105 + 12) && event.y() >= (y + 16) && event.y() < (y + 16 + 52)) {
             this.isScrolling = true;
@@ -291,7 +299,9 @@ public class MBMixerScreen extends AbstractContainerScreen<MBMixerMenu> {
         MixingRecipe recipe = ClientRecipeCache.cachedMixingRecipes.get(selectedId);
         if (recipe == null) return Optional.empty();
 
-        return Optional.of(buildRecipeTooltip(recipe));
+        List<Component> lines = new ArrayList<>(buildRecipeTooltip(recipe));
+        lines.add(Component.translatable("tooltip.castingmb.click_to_remove").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        return Optional.of(lines);
     }
 
     private List<Component> buildRecipeTooltip(MixingRecipe recipe) {

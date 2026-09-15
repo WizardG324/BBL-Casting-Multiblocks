@@ -9,6 +9,7 @@
   "block.castingmb.mb_tank": "Casting Multiblock Tank",
   "itemGroup.castingmb": "Casting - Multiblocks",
   "jei.castingmb.entity_melting": "Entity Melting",
+  "tooltip.castingmb.click_to_remove": "Click to remove set recipe",
   "tooltip.castingmb.empty": "Empty",
   "tooltip.castingmb.empty_space": "Free Space",
   "tooltip.castingmb.entity_melting": "Deals %s damage per %s ticks",
