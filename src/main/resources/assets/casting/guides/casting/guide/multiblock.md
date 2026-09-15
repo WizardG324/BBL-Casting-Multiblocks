@@ -12,6 +12,7 @@ item_ids:
     - 'castingmb:mb_regulator'
     - 'castingmb:mb_black_brick_glass'
     - 'castingmb:mb_interface'
+    - 'castingmb:mb_mixer'
 
 ---
 
@@ -37,6 +38,9 @@ The Multiblock Regulator is used to regulate the amount of fluid types that the 
 
 ## Multiblock Interface
 The Multiblock Interface is a block that can be placed anywhere in the multiblock structure and can be used to insert and extract fluids. It will also ad items to the controller to melt and extract resulting items from the Solidifiers inside the multiblock
+
+## Multiblock Interface
+The Multiblock Mixer is a block that can be placed anywhere in the multiblock structure and can be used to mix fluids to create alloys. Open the Mixer GUI to see a list of available alloys that can be created from the current fluids inside the Multiblock Controller. Click to confirm and the Mixer will continue to create that alloy when possible
 
 ## Entity Melting
 Some entities can be melted inside the multiblock into fluids seems completely fine right

@@ -1,9 +1,9 @@
 package com.benbenlaw.castingmb.screen;
 
 import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.network.packet.ChangeMoldPagePacket;
 import com.benbenlaw.castingmb.block.entity.MBTankBlockEntity;
 import com.benbenlaw.castingmb.block.entity.handler.MultiFluidResourceHandler;
+import com.benbenlaw.castingmb.network.packets.ChangeMoldPagePacket;
 import com.benbenlaw.core.Core;
 import com.benbenlaw.core.screen.util.DurationTooltip;
 import com.benbenlaw.core.screen.util.FluidRenderingUtils;
