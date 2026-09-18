@@ -275,8 +275,6 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         int newCapacity = cachedMultiblockData.volume() * 1000;
         fluidInventory.setTotalCapacity(newCapacity);
 
-        this.maxItemSlots = cachedMultiblockData.volume();
-
         fluidInventory.clampFluidsToCapacity();
 
         this.regulatorCount = 0;
