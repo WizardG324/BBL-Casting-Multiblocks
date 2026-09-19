@@ -275,6 +275,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         int newCapacity = cachedMultiblockData.volume() * 1000;
         fluidInventory.setTotalCapacity(newCapacity);
 
+        fluidInventory.mergeDuplicateTanks();
         fluidInventory.clampFluidsToCapacity();
 
         this.regulatorCount = 0;
@@ -359,10 +360,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
 
             for (FluidStackTemplate fluid : recipe.output()) {
                 fluidInventory.runInternal(() -> {
-                    int remaining = fluid.amount();
-                    for (int tank = 0; tank < fluidInventory.getMaxFluidTypes() && remaining > 0; tank++) {
-                        remaining -= fluidInventory.insert(tank, FluidResource.of(fluid), remaining, tx);
-                    }
+                    fluidInventory.insertAnyTank(FluidResource.of(fluid), fluid.amount(), tx);
                 });
             }
             tx.commit();
@@ -414,10 +412,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
             try (Transaction tx = Transaction.open(null)) {
                 for (FluidStackTemplate fluid : recipe.output()) {
                     fluidInventory.runInternal(() -> {
-                        int remaining = fluid.amount();
-                        for (int tank = 0; tank < fluidInventory.getMaxFluidTypes() && remaining > 0; tank++) {
-                            remaining -= fluidInventory.insert(tank, FluidResource.of(fluid), remaining, tx);
-                        }
+                        fluidInventory.insertAnyTank(FluidResource.of(fluid), fluid.amount(), tx);
                     });
                 }
                 tx.commit();

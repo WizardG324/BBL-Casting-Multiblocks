@@ -9,6 +9,8 @@ import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -62,6 +64,77 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         }
 
         return super.insert(index, resource, actualToInsert, transaction);
+    }
+
+    // Insert into a tank already holding this fluid before starting a new one.
+    public int insertAnyTank(FluidResource resource, int amount, TransactionContext transaction) {
+        if (resource.isEmpty() || amount <= 0) return 0;
+
+        int inserted = 0;
+
+        for (int tank = 0; tank < this.maxFluidTypes && inserted < amount; tank++) {
+            if (resource.equals(getResource(tank))) {
+                inserted += insert(tank, resource, amount - inserted, transaction);
+            }
+        }
+
+        for (int tank = 0; tank < this.maxFluidTypes && inserted < amount; tank++) {
+            if (getResource(tank).isEmpty()) {
+                inserted += insert(tank, resource, amount - inserted, transaction);
+            }
+        }
+
+        return inserted;
+    }
+
+    /**
+     * Fold duplicate slots of the same fluid into the lowest tank holding it.
+     * Moves fluids around rather than adding any, so it deliberately bypasses the total capacity check.
+     */
+    public void mergeDuplicateTanks() {
+        if (!hasDuplicateTanks()) return;
+
+        boolean[] changed = {false};
+
+        runInternal(() -> {
+            try (Transaction tx = Transaction.open(null)) {
+                for (int i = 0; i < size(); i++) {
+                    FluidResource target = getResource(i);
+                    if (target.isEmpty()) continue;
+
+                    for (int j = i + 1; j < size(); j++) {
+                        if (!target.equals(getResource(j))) continue;
+
+                        int amount = getAmountAsInt(j);
+                        if (amount <= 0) continue;
+
+                        int moved = super.insert(i, target, amount, tx);
+                        if (moved > 0) {
+                            super.extract(j, target, moved, tx);
+                            changed[0] = true;
+                        }
+                    }
+                }
+                tx.commit();
+            }
+        });
+
+        if (changed[0]) {
+            this.syncableBlockEntity.setChanged();
+            this.syncableBlockEntity.sync();
+        }
+    }
+
+    // Cheap check, so the common case never opens a transaction
+    private boolean hasDuplicateTanks() {
+        Set<FluidResource> seen = new HashSet<>();
+
+        for (int i = 0; i < size(); i++) {
+            FluidResource resource = getResource(i);
+            if (!resource.isEmpty() && !seen.add(resource)) return true;
+        }
+
+        return false;
     }
 
     @Override
