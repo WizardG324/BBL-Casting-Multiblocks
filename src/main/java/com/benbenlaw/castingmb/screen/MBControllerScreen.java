@@ -250,6 +250,11 @@ public class MBControllerScreen extends AbstractContainerScreen<MBControllerMenu
 
             if (totalFluidFound == 0) {
                 emptyTooltip.add(Component.literal("Empty"));
+                if (menu.blockEntity.getRegulatorCount() != 0) {
+                    emptyTooltip.add(Component.literal(
+                            "Max " + menu.blockEntity.getRegulatorCount() + " Fluid Types"
+                    ));
+                }
             } else {
                 emptyTooltip.add(Component.translatable("tooltip.castingmb.empty_space"));
             }

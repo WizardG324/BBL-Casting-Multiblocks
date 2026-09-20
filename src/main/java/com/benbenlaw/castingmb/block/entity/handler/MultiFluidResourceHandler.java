@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 public class MultiFluidResourceHandler extends SyncableFluidHandler {
     private int totalCapacity;
     private int maxFluidTypes;
-    // Store our own reference to bypass the private access in the parent class
+    private boolean partitioned = false;
     private final SyncableBlockEntity syncableBlockEntity;
 
     public MultiFluidResourceHandler(SyncableBlockEntity blockEntity, int maxFluidTypes, int totalCapacity, BiPredicate<Integer, FluidStack> canOutput, Predicate<Integer> canExtract) {
@@ -32,7 +32,7 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         if (this.totalCapacity != newCapacity) {
             this.totalCapacity = newCapacity;
             this.syncableBlockEntity.setChanged();
-            this.syncableBlockEntity.sync(); // Sync to client so the GUI updates the bar height
+            this.syncableBlockEntity.sync();
         }
     }
 
@@ -40,6 +40,14 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         int cappedMax = Math.min(max, this.size());
         if (this.maxFluidTypes != cappedMax) {
             this.maxFluidTypes = cappedMax;
+            this.syncableBlockEntity.setChanged();
+            this.syncableBlockEntity.sync();
+        }
+    }
+
+    public void setPartitioned(boolean partitioned) {
+        if (this.partitioned != partitioned) {
+            this.partitioned = partitioned;
             this.syncableBlockEntity.setChanged();
             this.syncableBlockEntity.sync();
         }
@@ -53,6 +61,14 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
 
         int currentTotal = getTotalFluidAmount();
         int spaceLeft = Math.max(0, this.totalCapacity - currentTotal);
+
+        if (this.partitioned && this.maxFluidTypes > 0) {
+            int perTypeCapacity = this.totalCapacity / this.maxFluidTypes;
+            int currentInSlot = getAmountAsInt(index);
+            int perTypeSpaceLeft = Math.max(0, perTypeCapacity - currentInSlot);
+            spaceLeft = Math.min(spaceLeft, perTypeSpaceLeft);
+        }
+
         int actualToInsert = Math.min(amount, spaceLeft);
 
         if (actualToInsert <= 0) return 0;
@@ -66,7 +82,6 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         return super.insert(index, resource, actualToInsert, transaction);
     }
 
-    // Insert into a tank already holding this fluid before starting a new one.
     public int insertAnyTank(FluidResource resource, int amount, TransactionContext transaction) {
         if (resource.isEmpty() || amount <= 0) return 0;
 
@@ -87,10 +102,6 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         return inserted;
     }
 
-    /**
-     * Fold duplicate slots of the same fluid into the lowest tank holding it.
-     * Moves fluids around rather than adding any, so it deliberately bypasses the total capacity check.
-     */
     public void mergeDuplicateTanks() {
         if (!hasDuplicateTanks()) return;
 
@@ -125,7 +136,6 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         }
     }
 
-    // Cheap check, so the common case never opens a transaction
     private boolean hasDuplicateTanks() {
         Set<FluidResource> seen = new HashSet<>();
 
@@ -152,6 +162,10 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
 
     public int getMaxFluidTypes() {
         return maxFluidTypes;
+    }
+
+    public boolean isPartitioned() {
+        return partitioned;
     }
 
     public void clampFluidsToCapacity() {

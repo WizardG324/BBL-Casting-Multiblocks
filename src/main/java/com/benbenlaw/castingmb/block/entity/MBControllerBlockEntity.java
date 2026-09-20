@@ -180,10 +180,10 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         boolean isWorking = false;
 
         List<FluidStack> existingFluids = new ArrayList<>();
-        boolean hasEmptySlot = false;
+        int emptySlotCount = 0;
         for (int i = 0; i < fluidInventory.getMaxFluidTypes(); i++) {
             FluidStack existing = FluidUtil.getStack(fluidInventory, i);
-            if (existing.isEmpty()) hasEmptySlot = true;
+            if (existing.isEmpty()) emptySlotCount++;
             else existingFluids.add(existing);
         }
 
@@ -216,7 +216,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                     }
                     maxProgress[i] = Math.max(max, 20);
 
-                    if (canFitFluids(recipe.output(), existingFluids, hasEmptySlot)) {
+                    if (canFitFluids(recipe.output(), existingFluids, emptySlotCount)) {
                         isWorking = true;
                         progress[i]++;
                         progressChanged = true;
@@ -289,9 +289,11 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         }
 
         if (regulatorCount > 0) {
-            fluidInventory.setMaxFluidTypes(1 + regulatorCount);
+            fluidInventory.setMaxFluidTypes(regulatorCount);
+            fluidInventory.setPartitioned(true);
         } else {
             fluidInventory.setMaxFluidTypes(100);
+            fluidInventory.setPartitioned(false);
         }
     }
 
@@ -382,12 +384,11 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         for (LivingEntity entity : entities) currentIds.add(entity.getUUID());
         entityDamageCooldowns.keySet().retainAll(currentIds);
 
-        // Same precomputed snapshot idea as the item-melting loop
         List<FluidStack> existingFluids = new ArrayList<>();
-        boolean hasEmptySlot = false;
+        int emptySlotCount = 0;
         for (int i = 0; i < fluidInventory.getMaxFluidTypes(); i++) {
             FluidStack existing = FluidUtil.getStack(fluidInventory, i);
-            if (existing.isEmpty()) hasEmptySlot = true;
+            if (existing.isEmpty()) emptySlotCount++;
             else existingFluids.add(existing);
         }
 
@@ -399,7 +400,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
 
             EntityMeltingRecipe recipe = recipeHolder.value();
 
-            if (!canFitFluids(recipe.output(), existingFluids, hasEmptySlot)) continue;
+            if (!canFitFluids(recipe.output(), existingFluids, emptySlotCount)) continue;
 
             int cooldown = entityDamageCooldowns.getOrDefault(entity.getUUID(), 0);
             if (cooldown > 0) {
@@ -501,24 +502,39 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         }
     }
 
-    private boolean canFitFluids(List<FluidStackTemplate> outputs, List<FluidStack> existingFluids, boolean hasEmptySlot) {
+    private boolean canFitFluids(List<FluidStackTemplate> outputs, List<FluidStack> existingFluids, int emptySlotCount) {
         int totalNeeded = outputs.stream().mapToInt(FluidStackTemplate::amount).sum();
         int currentTotal = fluidInventory.getTotalFluidAmount();
         int capacity = fluidInventory.getCapacityAsInt(0, FluidResource.EMPTY);
 
         if (currentTotal + totalNeeded > capacity) return false;
 
+        int maxFluidTypes = fluidInventory.getMaxFluidTypes();
+        int perTypeCapacity = (fluidInventory.isPartitioned() && maxFluidTypes > 0) ? capacity / maxFluidTypes : capacity;
+
+        int remainingEmptySlots = emptySlotCount;
+
         for (FluidStackTemplate out : outputs) {
-            boolean canPlace = hasEmptySlot;
-            if (!canPlace) {
-                for (FluidStack existing : existingFluids) {
-                    if (FluidStack.isSameFluidSameComponents(existing, out)) {
-                        canPlace = true;
-                        break;
-                    }
+            FluidStack matchedExisting = null;
+            for (FluidStack existing : existingFluids) {
+                if (FluidStack.isSameFluidSameComponents(existing, out)) {
+                    matchedExisting = existing;
+                    break;
                 }
             }
-            if (!canPlace) return false;
+
+            if (matchedExisting != null) {
+                // Fluid already has a slot - it must stay in that slot, so it's bound by
+                // that slot's remaining share rather than whether any other slot is free.
+                if (matchedExisting.getAmount() + out.amount() > perTypeCapacity) return false;
+            } else if (remainingEmptySlots > 0) {
+                // A brand-new fluid type claims one of the remaining empty slots, so a
+                // second new-fluid output in the same recipe can't double-claim it.
+                if (out.amount() > perTypeCapacity) return false;
+                remainingEmptySlots--;
+            } else {
+                return false;
+            }
         }
         return true;
     }
