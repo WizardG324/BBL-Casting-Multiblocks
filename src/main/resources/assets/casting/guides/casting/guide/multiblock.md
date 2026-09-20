@@ -37,9 +37,9 @@ Used to fill create the walls and floor of the structure, Glass can be used to v
 The Multiblock Regulator is used to regulate the amount of fluid types that the multiblock tank can add. Without regulators the multiblock tank can add any amount of fluid types. For each regulator added will allow you to store an addition fluid type. So with 3 regulators you can store 3 different fluid types in the multiblock tank. The amount of regulators will show when hovering over Multiblock Controller Tank.
 
 ## Multiblock Interface
-The Multiblock Interface is a block that can be placed anywhere in the multiblock structure and can be used to insert and extract fluids. It will also ad items to the controller to melt and extract resulting items from the Solidifiers inside the multiblock
+The Multiblock Interface is a block that can be placed anywhere in the multiblock structure and can be used to insert and extract fluids. It will also add items to the controller to melt and extract resulting items from the Solidifiers inside the multiblock
 
-## Multiblock Interface
+## Multiblock Mixer
 The Multiblock Mixer is a block that can be placed anywhere in the multiblock structure and can be used to mix fluids to create alloys. Open the Mixer GUI to see a list of available alloys that can be created from the current fluids inside the Multiblock Controller. Click to confirm and the Mixer will continue to create that alloy when possible
 
 ## Entity Melting

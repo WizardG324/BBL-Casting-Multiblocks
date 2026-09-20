@@ -82,7 +82,7 @@ public class CastingMBRecipeProvider extends RecipeProvider {
                 Items.HOPPER, "black_brick/mb_interface", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
 
         simpleSolidifierRecipe(CastingMBBlocks.MB_MIXER, getFluidIngredient("molten_black_brick", 2000),
-                CastingMBBlocks.MB_TANK, "black_brick/mb_mixer", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
+                CastingBlocks.MIXER, "black_brick/mb_mixer", ResourceType.STORAGE_BLOCKS, getTempFromFluid("molten_black_brick"));
 
         //Entity Melting
         simpleEntityMeltingRecipe(EntityType.SNOW_GOLEM, "chilled_water", 6000, 20, 0.2);

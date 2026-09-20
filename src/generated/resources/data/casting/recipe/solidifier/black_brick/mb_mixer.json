@@ -8,7 +8,7 @@
   "melting_temp": 1000,
   "mold": {
     "count": 1,
-    "ingredient": "castingmb:mb_tank"
+    "ingredient": "casting:mixer"
   },
   "output": {
     "count": 1,
