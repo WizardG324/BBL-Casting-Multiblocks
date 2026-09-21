@@ -180,12 +180,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         boolean isWorking = false;
 
         List<FluidStack> existingFluids = new ArrayList<>();
-        int emptySlotCount = 0;
-        for (int i = 0; i < fluidInventory.getMaxFluidTypes(); i++) {
-            FluidStack existing = FluidUtil.getStack(fluidInventory, i);
-            if (existing.isEmpty()) emptySlotCount++;
-            else existingFluids.add(existing);
-        }
+        int emptySlotCount = scanFluidSnapshot(existingFluids);
 
         int loopLimit = Math.min(maxItemSlots, 100);
         for (int i = 0; i < loopLimit; i++) {
@@ -225,6 +220,10 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                             executeMelting(i, recipe, activeFuelTank);
                             progress[i] = 0;
                             contentsChanged = true;
+                            // Fluids just changed for real - refresh the snapshot so the next
+                            // slot's canFitFluids check this same tick sees the up-to-date tank
+                            // state, instead of reusing the stale start-of-tick empty-slot count.
+                            emptySlotCount = scanFluidSnapshot(existingFluids);
                         }
                     }
                 } else if (progress[i] > 0) {
@@ -385,12 +384,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         entityDamageCooldowns.keySet().retainAll(currentIds);
 
         List<FluidStack> existingFluids = new ArrayList<>();
-        int emptySlotCount = 0;
-        for (int i = 0; i < fluidInventory.getMaxFluidTypes(); i++) {
-            FluidStack existing = FluidUtil.getStack(fluidInventory, i);
-            if (existing.isEmpty()) emptySlotCount++;
-            else existingFluids.add(existing);
-        }
+        int emptySlotCount = scanFluidSnapshot(existingFluids);
 
         for (LivingEntity entity : entities) {
             if (entity.isDeadOrDying()) continue;
@@ -418,6 +412,10 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                 }
                 tx.commit();
             }
+
+            // Fluids just changed for real - refresh so the next entity's canFitFluids
+            // check this same tick sees the up-to-date tank state.
+            emptySlotCount = scanFluidSnapshot(existingFluids);
 
             if (recipe.durationModifier().isPresent()) {
                 entityDamageCooldowns.put(entity.getUUID(), (int) (50 * recipe.durationModifier().get()));
@@ -500,6 +498,24 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
         if (state.hasProperty(CastingBlock.WORKING) && state.getValue(CastingBlock.WORKING) != working) {
             level.setBlock(worldPosition, state.setValue(CastingBlock.WORKING, working), 3);
         }
+    }
+
+    /**
+     * Snapshots which fluids currently occupy tank slots and how many slots are empty.
+     * Must be re-taken after any real insert/extract this same tick, since canFitFluids
+     * checks are cheap point-in-time reads rather than reservations against the tank.
+     */
+    private int scanFluidSnapshot(List<FluidStack> existingFluids) {
+        existingFluids.clear();
+        int emptySlotCount = 0;
+
+        for (int i = 0; i < fluidInventory.getMaxFluidTypes(); i++) {
+            FluidStack existing = FluidUtil.getStack(fluidInventory, i);
+            if (existing.isEmpty()) emptySlotCount++;
+            else existingFluids.add(existing);
+        }
+
+        return emptySlotCount;
     }
 
     private boolean canFitFluids(List<FluidStackTemplate> outputs, List<FluidStack> existingFluids, int emptySlotCount) {
