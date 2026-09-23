@@ -86,7 +86,7 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
     private final Map<UUID, Integer> entityDamageCooldowns = new HashMap<>();
 
     private final SyncableItemHandler inventory =
-            new DynamicInputItemHandler(this, 100, (i, stack) -> i >= 0 && i < 99, i -> i == 100) {
+            new DynamicInputItemHandler(this, 100, (i, stack) -> i >= 0 && i < 100, i -> i == 100) {
                 @Override
                 protected void onContentsChanged(int index, ItemStack previousContents) {
                     if (index >= 0 && index < slotRecipeDirty.length) {
