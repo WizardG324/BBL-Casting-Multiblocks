@@ -5,7 +5,6 @@ import com.benbenlaw.castingmb.block.CastingMBBlockEntities;
 import com.benbenlaw.castingmb.block.entity.handler.InterfaceItemHandler;
 import com.benbenlaw.core.block.entity.SyncableBlockEntity;
 import com.benbenlaw.core.block.entity.handler.fluid.SyncableFluidHandler;
-import com.benbenlaw.core.block.entity.handler.item.SyncableItemHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -20,60 +19,17 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.Nullable;
 
-public class MBInterfaceBlockEntity extends SyncableBlockEntity {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
-    private static final int BUFFER_SIZE = 27;
-    private static final int SOLIDIFIER_OUTPUT_SLOT = 1;
+public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     private MBControllerBlockEntity cachedController;
     private BlockPos controllerPos;
 
-    private final SyncableItemHandler outputBuffer =
-            new SyncableItemHandler(this, BUFFER_SIZE, (i, stack) -> false, i -> true);
-
     public MBInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CastingMBBlockEntities.MB_INTERFACE_BLOCK_ENTITY.get(), pos, state);
-    }
-
-    public void tick() {
-        if (level == null || level.isClientSide()) return;
-
-        MBControllerBlockEntity controller = getController();
-        if (controller == null) return;
-
-        pullFromSolidifiers(controller);
-    }
-
-    private void pullFromSolidifiers(MBControllerBlockEntity controller) {
-        if (controller.cachedMultiblockData == null) return;
-
-        for (BlockPos pos : controller.cachedMultiblockData.extraBlocks()) {
-            if (level.getBlockEntity(pos) instanceof MBSolidifierBlockEntity solidifier) {
-                var solidifierInventory = solidifier.getItemHandler();
-                ItemResource outputResource = solidifierInventory.getResource(SOLIDIFIER_OUTPUT_SLOT);
-                if (outputResource.isEmpty()) continue;
-
-                int available = solidifierInventory.getAmountAsInt(SOLIDIFIER_OUTPUT_SLOT);
-
-                try (Transaction tx = Transaction.open(null)) {
-                    int[] inserted = {0};
-                    outputBuffer.runInternal(() -> {
-                        int remaining = available;
-                        for (int i = 0; i < outputBuffer.size() && remaining > 0; i++) {
-                            remaining -= outputBuffer.insert(i, outputResource, remaining, tx);
-                        }
-                        inserted[0] = available - remaining;
-                    });
-
-                    if (inserted[0] > 0) {
-                        int extracted = solidifierInventory.extract(SOLIDIFIER_OUTPUT_SLOT, outputResource, inserted[0], tx);
-                        if (extracted == inserted[0]) {
-                            tx.commit();
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public @Nullable MBControllerBlockEntity getController() {
@@ -102,7 +58,17 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
     public @Nullable ResourceHandler<ItemResource> getItemHandler() {
         MBControllerBlockEntity controller = getController();
         if (controller == null) return null;
-        return new InterfaceItemHandler(controller.getItemHandler(), outputBuffer);
+
+        List<ResourceHandler<ItemResource>> solidifierOutputs = new ArrayList<>();
+        if (level != null && controller.cachedMultiblockData != null) {
+            for (BlockPos pos : controller.cachedMultiblockData.extraBlocks()) {
+                if (level.getBlockEntity(pos) instanceof MBSolidifierBlockEntity solidifier) {
+                    solidifierOutputs.add(solidifier.getItemHandler());
+                }
+            }
+        }
+
+        return new InterfaceItemHandler(controller.getItemHandler(), solidifierOutputs);
     }
 
     public @Nullable FluidStacksResourceHandler getFluidHandler() {
@@ -118,7 +84,7 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
         if (stack.getItem() instanceof FluidMoverItem) {
             SyncableFluidHandler fluidHandler = (SyncableFluidHandler) controller.getFluidHandler();
-            int[] allTanks = java.util.stream.IntStream.range(0, fluidHandler.size()).toArray();
+            int[] allTanks = IntStream.range(0, fluidHandler.size()).toArray();
             return FluidMoverItem.onBlockInteract(stack, fluidHandler, allTanks, allTanks);
         }
 
@@ -133,7 +99,6 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     protected void saveAdditional(ValueOutput output) {
-        outputBuffer.serialize(output.child("outputBuffer"));
         if (controllerPos != null) {
             output.putLong("controller_pos", controllerPos.asLong());
         }
@@ -142,7 +107,6 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     protected void loadAdditional(ValueInput input) {
-        outputBuffer.deserialize(input.childOrEmpty("outputBuffer"));
         long posLong = input.getLongOr("controller_pos", 0);
         if (posLong != 0) {
             this.controllerPos = BlockPos.of(posLong);
@@ -152,6 +116,5 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
-        dropInventoryContents(outputBuffer);
     }
 }

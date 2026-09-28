@@ -1,9 +1,6 @@
 package com.benbenlaw.castingmb.block.custom;
 
-import com.benbenlaw.casting.block.CastingBlockEntities;
 import com.benbenlaw.casting.block.custom.CastingBlock;
-import com.benbenlaw.casting.block.custom.SolidifierBlock;
-import com.benbenlaw.casting.block.entity.SolidifierBlockEntity;
 import com.benbenlaw.castingmb.block.CastingMBBlockEntities;
 import com.benbenlaw.castingmb.block.entity.MBSolidifierBlockEntity;
 import com.mojang.serialization.MapCodec;

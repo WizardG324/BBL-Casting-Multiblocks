@@ -1,7 +1,6 @@
 package com.benbenlaw.castingmb.block.custom;
 
 import com.benbenlaw.castingmb.block.CastingMBBlockEntities;
-import com.benbenlaw.castingmb.block.entity.IsMultiblockTank;
 import com.benbenlaw.castingmb.block.entity.MBTankBlockEntity;
 import com.benbenlaw.core.block.SyncableBlock;
 import com.mojang.serialization.MapCodec;

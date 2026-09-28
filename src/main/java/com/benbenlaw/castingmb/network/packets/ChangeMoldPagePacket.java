@@ -1,8 +1,6 @@
 package com.benbenlaw.castingmb.network.packets;
 
-import com.benbenlaw.casting.screen.SolidifierMenu;
 import com.benbenlaw.castingmb.CastingMB;
-import com.benbenlaw.castingmb.network.CastingMBNetworking;
 import com.benbenlaw.castingmb.screen.MBSolidifierMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;

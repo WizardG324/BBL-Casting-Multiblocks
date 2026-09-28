@@ -1,12 +1,7 @@
 package com.benbenlaw.castingmb.block;
 
-import com.benbenlaw.casting.block.entity.ControllerBlockEntity;
 import com.benbenlaw.castingmb.CastingMB;
-import com.benbenlaw.castingmb.block.entity.MBControllerBlockEntity;
-import com.benbenlaw.castingmb.block.entity.MBInterfaceBlockEntity;
-import com.benbenlaw.castingmb.block.entity.MBMixerBlockEntity;
-import com.benbenlaw.castingmb.block.entity.MBSolidifierBlockEntity;
-import com.benbenlaw.castingmb.block.entity.MBTankBlockEntity;
+import com.benbenlaw.castingmb.block.entity.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;

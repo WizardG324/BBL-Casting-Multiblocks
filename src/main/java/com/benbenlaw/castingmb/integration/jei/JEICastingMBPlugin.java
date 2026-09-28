@@ -1,17 +1,11 @@
 package com.benbenlaw.castingmb.integration.jei;
 
-import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.block.CastingBlocks;
 import com.benbenlaw.casting.integration.jei.FuelRecipeCategory;
 import com.benbenlaw.casting.integration.jei.MeltingRecipeCategory;
-import com.benbenlaw.casting.integration.jei.MixingRecipeCategory;
 import com.benbenlaw.casting.integration.jei.SolidifierRecipeCategory;
-import com.benbenlaw.casting.screen.ControllerScreen;
-import com.benbenlaw.casting.screen.SolidifierScreen;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import com.benbenlaw.castingmb.event.client.ClientRecipeCache;
-import com.benbenlaw.castingmb.recipe.CastingMBRecipeTypes;
 import com.benbenlaw.castingmb.screen.MBControllerScreen;
 import com.benbenlaw.castingmb.screen.MBSolidifierScreen;
 import com.benbenlaw.core.integration.jei.GhostFilter;

@@ -4,7 +4,6 @@ import com.benbenlaw.casting.block.CastingBlocks;
 import com.benbenlaw.casting.data.custom.FluidStackTemplateHelper;
 import com.benbenlaw.casting.data.custom.SolidifierRecipeBuilder;
 import com.benbenlaw.casting.fluid.FluidData;
-import com.benbenlaw.casting.item.CastingItems;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import com.benbenlaw.castingmb.data.custom.EntityMeltingRecipeBuilder;
@@ -16,9 +15,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.benbenlaw.casting.data.custom.FluidStackTemplateHelper.getFluidIngredient;
-import static com.benbenlaw.casting.data.custom.FluidStackTemplateHelper.getFluidStack;
 
 public class CastingMBRecipeProvider extends RecipeProvider {
 

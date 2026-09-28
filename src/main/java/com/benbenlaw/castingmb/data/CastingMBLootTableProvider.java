@@ -1,8 +1,6 @@
 package com.benbenlaw.castingmb.data;
 
-import com.benbenlaw.casting.block.CastingBlocks;
 import com.benbenlaw.casting.item.CastingDataComponents;
-import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.core.HolderLookup;

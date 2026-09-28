@@ -31,7 +31,6 @@ import net.neoforged.neoforge.transfer.item.ItemUtil;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class MBSolidifierScreen extends AbstractContainerScreen<MBSolidifierMenu> {
 

@@ -2,11 +2,9 @@ package com.benbenlaw.castingmb.screen;
 
 import com.benbenlaw.casting.Casting;
 import com.benbenlaw.castingmb.CastingMB;
-
 import com.benbenlaw.castingmb.block.entity.MBTankBlockEntity;
 import com.benbenlaw.core.screen.util.FluidRenderingUtils;
 import com.benbenlaw.core.util.MouseUtil;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -25,7 +23,6 @@ import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class MBControllerScreen extends AbstractContainerScreen<MBControllerMenu> {

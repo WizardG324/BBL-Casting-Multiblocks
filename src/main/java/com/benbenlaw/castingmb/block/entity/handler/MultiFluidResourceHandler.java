@@ -1,11 +1,9 @@
 package com.benbenlaw.castingmb.block.entity.handler;
 
 import com.benbenlaw.core.block.entity.SyncableBlockEntity;
-import com.benbenlaw.core.block.entity.handler.fluid.OutputFluidHandler;
 import com.benbenlaw.core.block.entity.handler.fluid.SyncableFluidHandler;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
-import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
@@ -187,5 +185,35 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
         }
         this.syncableBlockEntity.setChanged();
         this.syncableBlockEntity.sync();
+    }
+
+    /**
+     * Drains any slot back down to its current fair share (totalCapacity / maxFluidTypes).
+     * A slot can end up over that share after regulators are removed/added (the old share
+     * was bigger) or after mergeDuplicateTanks folds several slots together - left alone,
+     * that one fluid keeps eating the shared total capacity and permanently starves any
+     * other fluid type of room, even though its own per-type quota would otherwise fit.
+     */
+    public void clampFluidsToPartition() {
+        if (!this.partitioned || this.maxFluidTypes <= 0) return;
+
+        int perTypeCapacity = this.totalCapacity / this.maxFluidTypes;
+        boolean changed = false;
+
+        try (Transaction tx = Transaction.open(null)) {
+            for (int i = 0; i < this.maxFluidTypes; i++) {
+                int slotAmount = getAmountAsInt(i);
+                if (slotAmount > perTypeCapacity) {
+                    int extracted = extract(i, getResource(i), slotAmount - perTypeCapacity, tx);
+                    if (extracted > 0) changed = true;
+                }
+            }
+            tx.commit();
+        }
+
+        if (changed) {
+            this.syncableBlockEntity.setChanged();
+            this.syncableBlockEntity.sync();
+        }
     }
 }

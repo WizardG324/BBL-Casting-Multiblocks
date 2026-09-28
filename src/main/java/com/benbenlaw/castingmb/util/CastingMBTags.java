@@ -1,6 +1,5 @@
 package com.benbenlaw.castingmb.util;
 
-import com.benbenlaw.casting.Casting;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.core.util.CoreTags;
 import net.minecraft.tags.TagKey;

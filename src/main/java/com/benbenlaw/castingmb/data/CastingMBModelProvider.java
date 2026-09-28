@@ -1,10 +1,6 @@
 package com.benbenlaw.castingmb.data;
 
-import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.block.CastingBlocks;
 import com.benbenlaw.casting.block.custom.CastingBlock;
-import com.benbenlaw.casting.data.CastingModelProvider;
-import com.benbenlaw.casting.item.CastingItems;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import com.benbenlaw.castingmb.block.entity.renderer.MBTankSpecialRenderer;
@@ -19,12 +15,10 @@ import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.model.item.DynamicFluidContainerModel;
@@ -34,7 +28,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static com.benbenlaw.casting.fluid.CastingFluids.FLUIDS_MAP;
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 
 public class CastingMBModelProvider extends ModelProvider {

@@ -1,7 +1,6 @@
 package com.benbenlaw.castingmb.data.custom;
 
 import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.recipe.custom.MeltingRecipe;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.recipe.EntityMeltingRecipe;
 import net.minecraft.advancements.Advancement;
@@ -14,9 +13,7 @@ import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

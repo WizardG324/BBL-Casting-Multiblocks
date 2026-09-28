@@ -1,11 +1,8 @@
 package com.benbenlaw.castingmb.data;
 
-import com.benbenlaw.casting.Casting;
 import com.benbenlaw.castingmb.CastingMB;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
-
-import static com.benbenlaw.casting.fluid.CastingFluids.FLUIDS_MAP;
 
 public class CastingMBLangProvider extends LanguageProvider {
 

@@ -1,17 +1,11 @@
 package com.benbenlaw.castingmb.data;
 
 import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.block.CastingBlocks;
-import com.benbenlaw.casting.block.custom.CastingBlock;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import com.benbenlaw.castingmb.util.CastingMBTags;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import org.jetbrains.annotations.NotNull;
 

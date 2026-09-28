@@ -1,16 +1,12 @@
 package com.benbenlaw.castingmb.item;
 
 import com.benbenlaw.casting.Casting;
-import com.benbenlaw.casting.fluid.CastingFluids;
-import com.benbenlaw.casting.item.CastingCreativeModeTab;
-import com.benbenlaw.casting.item.CastingItems;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.block.CastingMBBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;

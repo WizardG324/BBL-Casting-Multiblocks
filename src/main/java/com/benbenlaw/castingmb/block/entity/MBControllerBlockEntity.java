@@ -46,7 +46,6 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidStackTemplate;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidUtil;
@@ -220,9 +219,6 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                             executeMelting(i, recipe, activeFuelTank);
                             progress[i] = 0;
                             contentsChanged = true;
-                            // Fluids just changed for real - refresh the snapshot so the next
-                            // slot's canFitFluids check this same tick sees the up-to-date tank
-                            // state, instead of reusing the stale start-of-tick empty-slot count.
                             emptySlotCount = scanFluidSnapshot(existingFluids);
                         }
                     }
@@ -294,6 +290,8 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
             fluidInventory.setMaxFluidTypes(100);
             fluidInventory.setPartitioned(false);
         }
+
+        fluidInventory.clampFluidsToPartition();
     }
 
     private void clampItemsToCapacity() {
@@ -413,8 +411,6 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
                 tx.commit();
             }
 
-            // Fluids just changed for real - refresh so the next entity's canFitFluids
-            // check this same tick sees the up-to-date tank state.
             emptySlotCount = scanFluidSnapshot(existingFluids);
 
             if (recipe.durationModifier().isPresent()) {
@@ -540,12 +536,8 @@ public class MBControllerBlockEntity extends SyncableBlockEntity implements Menu
             }
 
             if (matchedExisting != null) {
-                // Fluid already has a slot - it must stay in that slot, so it's bound by
-                // that slot's remaining share rather than whether any other slot is free.
                 if (matchedExisting.getAmount() + out.amount() > perTypeCapacity) return false;
             } else if (remainingEmptySlots > 0) {
-                // A brand-new fluid type claims one of the remaining empty slots, so a
-                // second new-fluid output in the same recipe can't double-claim it.
                 if (out.amount() > perTypeCapacity) return false;
                 remainingEmptySlots--;
             } else {

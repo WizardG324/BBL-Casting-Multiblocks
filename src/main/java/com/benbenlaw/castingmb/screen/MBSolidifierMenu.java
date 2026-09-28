@@ -1,7 +1,5 @@
 package com.benbenlaw.castingmb.screen;
 
-import com.benbenlaw.casting.block.entity.SolidifierBlockEntity;
-import com.benbenlaw.casting.screen.CastingMenuTypes;
 import com.benbenlaw.casting.util.CastingTags;
 import com.benbenlaw.castingmb.block.entity.MBSolidifierBlockEntity;
 import com.benbenlaw.castingmb.screen.util.PagedMoldSlot;
