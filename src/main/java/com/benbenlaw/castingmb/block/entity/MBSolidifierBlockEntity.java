@@ -185,7 +185,7 @@ public class MBSolidifierBlockEntity extends SyncableBlockEntity implements Menu
                 double finalModifier = recipe.durationModifier().orElse(1.0);
 
                 int recipeMeltingTemp = recipe.meltingTemp();
-                boolean fuelBenefited = currentTemp < recipeMeltingTemp;
+                boolean fuelBenefited = coolantTank != null && currentTemp < recipeMeltingTemp;
 
                 if (fuelBenefited) {
                     int tempDifference = recipeMeltingTemp - currentTemp;

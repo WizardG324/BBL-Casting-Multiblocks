@@ -68,6 +68,23 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
             }
         }
 
+        // Most hoppers/pipes just grab from the first extractable slot they find each
+        // pull and stop there. With one fixed slot per solidifier, whichever one lands
+        // first would get drained every time while the rest sit ignored (and eventually
+        // back up and stall). Rotating the order by game time gives every solidifier a
+        // turn at being "first" over time instead of one hogging every extraction.
+        int count = solidifierOutputs.size();
+        if (count > 1 && level != null) {
+            int rotation = (int) (level.getGameTime() % count);
+            if (rotation != 0) {
+                List<ResourceHandler<ItemResource>> rotated = new ArrayList<>(count);
+                for (int i = 0; i < count; i++) {
+                    rotated.add(solidifierOutputs.get((rotation + i) % count));
+                }
+                solidifierOutputs = rotated;
+            }
+        }
+
         return new InterfaceItemHandler(controller.getItemHandler(), solidifierOutputs);
     }
 
