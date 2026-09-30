@@ -340,21 +340,23 @@ public class MBSolidifierBlockEntity extends SyncableBlockEntity implements Menu
             ItemStack fullBucket = new ItemStack(fluid.getFluid().getBucket());
 
             if (fluid.getAmount() >= 1000 && !fullBucket.is(Items.AIR)) {
+                int tank = i;
 
                 try (Transaction tx = Transaction.openRoot()) {
-                    inventory.runInternal(() -> {
-                        inventory.extract(INPUT_SLOT, ItemResource.of(new ItemStack(Items.BUCKET)), 1, tx);
-                        inventory.insert(OUTPUT_SLOT, ItemResource.of(fullBucket), 1, tx);
-                    });
+                    boolean swapped = inventory.runInternal(() ->
+                            inventory.extract(INPUT_SLOT, ItemResource.of(new ItemStack(Items.BUCKET)), 1, tx) == 1
+                                    && inventory.insert(OUTPUT_SLOT, ItemResource.of(fullBucket), 1, tx) == 1);
 
-                    handler.runInternal(() -> {
-                        handler.extract(0, FluidResource.of(fluid), 1000, tx);
-                    });
+                    int drained = handler.runInternal(() -> handler.extract(tank, FluidResource.of(fluid), 1000, tx));
 
-                    tx.commit();
-
+                    // Only keep the filled bucket if the fluid really left the tank
+                    if (swapped && drained == 1000) {
+                        tx.commit();
+                    }
                 }
 
+                // One bucket per cycle, from the fluid canFillBucket picked
+                return;
             }
         }
     }

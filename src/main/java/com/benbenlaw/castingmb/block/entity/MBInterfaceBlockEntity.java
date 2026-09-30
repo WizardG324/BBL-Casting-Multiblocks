@@ -16,7 +16,9 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,6 +29,37 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     private MBControllerBlockEntity cachedController;
     private BlockPos controllerPos;
+
+    private final InterfaceItemHandler itemHandler = new InterfaceItemHandler(this);
+
+    // Rebuilt at most once a tick
+    private List<MBSolidifierBlockEntity> solidifiers = List.of();
+    private long solidifiersTick = Long.MIN_VALUE;
+
+    // Round-robin over the solidifiers, advanced once per committed transaction that took something out of one
+    private int solidifierRotation;
+    private boolean extractedThisTransaction;
+
+    // Only advances when an extraction commits, so a simulated one can't skip a solidifier
+    private final SnapshotJournal<Boolean> rotationJournal = new SnapshotJournal<>() {
+        @Override
+        protected Boolean createSnapshot() {
+            return extractedThisTransaction;
+        }
+
+        @Override
+        protected void revertToSnapshot(Boolean snapshot) {
+            extractedThisTransaction = snapshot;
+        }
+
+        @Override
+        protected void onRootCommit(Boolean originalState) {
+            if (extractedThisTransaction) {
+                extractedThisTransaction = false;
+                solidifierRotation++;
+            }
+        }
+    };
 
     public MBInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CastingMBBlockEntities.MB_INTERFACE_BLOCK_ENTITY.get(), pos, state);
@@ -39,53 +72,78 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
             return cachedController;
         }
 
-        if (controllerPos != null) {
-            if (level.getBlockEntity(controllerPos) instanceof MBControllerBlockEntity controller) {
-                this.cachedController = controller;
-                return controller;
-            }
+        MBControllerBlockEntity found = null;
+        if (controllerPos != null && level.getBlockEntity(controllerPos) instanceof MBControllerBlockEntity controller) {
+            found = controller;
         }
-        return null;
+        link(found);
+        return found;
     }
 
     public void setController(MBControllerBlockEntity controller) {
-        this.cachedController = controller;
+        link(controller);
         this.controllerPos = controller.getBlockPos();
         this.setChanged();
         this.sync();
     }
 
+    private void link(@Nullable MBControllerBlockEntity controller) {
+        if (this.cachedController == controller) return;
+        this.cachedController = controller;
+        if (level != null) {
+            level.invalidateCapabilities(worldPosition);
+        }
+    }
+
     public @Nullable ResourceHandler<ItemResource> getItemHandler() {
+        return getController() != null ? itemHandler : null;
+    }
+
+    public @Nullable ResourceHandler<ItemResource> controllerItems() {
         MBControllerBlockEntity controller = getController();
-        if (controller == null) return null;
+        return controller != null ? controller.getItemHandler() : null;
+    }
 
-        List<ResourceHandler<ItemResource>> solidifierOutputs = new ArrayList<>();
-        if (level != null && controller.cachedMultiblockData != null) {
-            for (BlockPos pos : controller.cachedMultiblockData.extraBlocks()) {
-                if (level.getBlockEntity(pos) instanceof MBSolidifierBlockEntity solidifier) {
-                    solidifierOutputs.add(solidifier.getItemHandler());
-                }
+    public int solidifierCount() {
+        return solidifiers().size();
+    }
+
+    // The solidifier output in round-robin order, or null if it is gone
+    public @Nullable ResourceHandler<ItemResource> solidifierOutput(int i) {
+        List<MBSolidifierBlockEntity> current = solidifiers();
+        if (i < 0 || i >= current.size()) return null;
+
+        MBSolidifierBlockEntity solidifier = current.get(Math.floorMod(i + solidifierRotation, current.size()));
+        return solidifier.isRemoved() ? null : solidifier.getItemHandler();
+    }
+
+    public void onSolidifierExtracted(TransactionContext transaction) {
+        rotationJournal.updateSnapshots(transaction);
+        extractedThisTransaction = true;
+    }
+
+    private List<MBSolidifierBlockEntity> solidifiers() {
+        if (level == null) return List.of();
+
+        long now = level.getGameTime();
+        if (now != solidifiersTick) {
+            solidifiersTick = now;
+            solidifiers = collectSolidifiers();
+        }
+        return solidifiers;
+    }
+
+    private List<MBSolidifierBlockEntity> collectSolidifiers() {
+        MBControllerBlockEntity controller = getController();
+        if (level == null || controller == null || controller.cachedMultiblockData == null) return List.of();
+
+        List<MBSolidifierBlockEntity> found = new ArrayList<>();
+        for (BlockPos pos : controller.cachedMultiblockData.extraBlocks()) {
+            if (level.getBlockEntity(pos) instanceof MBSolidifierBlockEntity solidifier) {
+                found.add(solidifier);
             }
         }
-
-        // Most hoppers/pipes just grab from the first extractable slot they find each
-        // pull and stop there. With one fixed slot per solidifier, whichever one lands
-        // first would get drained every time while the rest sit ignored (and eventually
-        // back up and stall). Rotating the order by game time gives every solidifier a
-        // turn at being "first" over time instead of one hogging every extraction.
-        int count = solidifierOutputs.size();
-        if (count > 1 && level != null) {
-            int rotation = (int) (level.getGameTime() % count);
-            if (rotation != 0) {
-                List<ResourceHandler<ItemResource>> rotated = new ArrayList<>(count);
-                for (int i = 0; i < count; i++) {
-                    rotated.add(solidifierOutputs.get((rotation + i) % count));
-                }
-                solidifierOutputs = rotated;
-            }
-        }
-
-        return new InterfaceItemHandler(controller.getItemHandler(), solidifierOutputs);
+        return found;
     }
 
     public @Nullable FluidStacksResourceHandler getFluidHandler() {
