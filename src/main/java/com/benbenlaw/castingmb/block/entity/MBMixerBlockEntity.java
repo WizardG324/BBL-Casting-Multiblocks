@@ -108,13 +108,13 @@ public class MBMixerBlockEntity extends SyncableBlockEntity implements MenuProvi
         if (recipeHolder != null) {
             MixingRecipe recipe = recipeHolder.value();
 
-            if (canMix(controller, recipe)) {
+            if (tryMix(controller, recipe, false)) {
                 isCurrentlyWorking = true;
                 progress++;
                 progressChanged = true;
 
                 if (progress >= maxProgress) {
-                    executeMixing(controller, recipe);
+                    tryMix(controller, recipe, true);
                     progress = 0;
                     contentsChanged = true;
                 }
@@ -144,38 +144,10 @@ public class MBMixerBlockEntity extends SyncableBlockEntity implements MenuProvi
         }
     }
 
-    private boolean canMix(MBControllerBlockEntity controller, MixingRecipe recipe) {
-        FluidStacksResourceHandler handler = controller.getFluidHandler();
-
-        for (SizedFluidIngredient required : recipe.fluids()) {
-            if (!hasFluidSatisfyingIngredient(handler, required)) return false;
-        }
-
-        FluidStack output = recipe.outputFluid().create();
-
-        try (Transaction tx = Transaction.open(null)) {
-            int remaining = output.getAmount();
-            for (int i = 0; i < handler.size() && remaining > 0; i++) {
-                remaining -= handler.insert(i, FluidResource.of(output), remaining, tx);
-            }
-            return remaining <= 0;
-        }
-    }
-
-    private boolean hasFluidSatisfyingIngredient(FluidStacksResourceHandler handler, SizedFluidIngredient required) {
-        int totalFound = 0;
-
-        for (int i = 0; i < handler.size(); i++) {
-            FluidStack inTank = FluidUtil.getStack(handler, i);
-            if (required.ingredient().test(inTank)) {
-                totalFound += inTank.getAmount();
-            }
-        }
-
-        return totalFound >= required.amount();
-    }
-
-    private void executeMixing(MBControllerBlockEntity controller, MixingRecipe recipe) {
+    // Drains the inputs, then inserts the output, in one transaction. With commit false it's a dry run
+    // that's rolled back, so the check sees the room an ingredient frees when it's fully used up, and
+    // always agrees with the real mix.
+    private boolean tryMix(MBControllerBlockEntity controller, MixingRecipe recipe, boolean commit) {
         FluidStacksResourceHandler handler = controller.getFluidHandler();
 
         try (Transaction tx = Transaction.open(null)) {
@@ -186,12 +158,11 @@ public class MBMixerBlockEntity extends SyncableBlockEntity implements MenuProvi
                     FluidStack inTank = FluidUtil.getStack(handler, i);
 
                     if (required.ingredient().test(inTank)) {
-                        int drained = handler.extract(i, FluidResource.of(inTank), remainingToDrain, tx);
-                        remainingToDrain -= drained;
+                        remainingToDrain -= handler.extract(i, FluidResource.of(inTank), remainingToDrain, tx);
                     }
                 }
 
-                if (remainingToDrain > 0) return;
+                if (remainingToDrain > 0) return false;
             }
 
             FluidStack outputStack = recipe.outputFluid().create();
@@ -201,13 +172,16 @@ public class MBMixerBlockEntity extends SyncableBlockEntity implements MenuProvi
             }
 
             // All or nothing, committing a partial insert would consume the inputs and void the rest
-            if (remaining > 0) return;
+            if (remaining > 0) return false;
 
-            tx.commit();
+            if (commit) tx.commit();
         }
 
-        controller.setChanged();
-        controller.sync();
+        if (commit) {
+            controller.setChanged();
+            controller.sync();
+        }
+        return true;
     }
 
     private RecipeHolder<MixingRecipe> getSelectedRecipe() {
