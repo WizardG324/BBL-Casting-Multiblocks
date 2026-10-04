@@ -77,6 +77,8 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
             return 0;
         }
 
+        if (existingResource.isEmpty() && hasFluidElsewhere(index, resource)) return 0;
+
         return super.insert(index, resource, actualToInsert, transaction);
     }
 
@@ -132,6 +134,13 @@ public class MultiFluidResourceHandler extends SyncableFluidHandler {
             this.syncableBlockEntity.setChanged();
             this.syncableBlockEntity.sync();
         }
+    }
+
+    private boolean hasFluidElsewhere(int index, FluidResource resource) {
+        for (int i = 0; i < size(); i++) {
+            if (i != index && resource.equals(getResource(i))) return true;
+        }
+        return false;
     }
 
     private boolean hasDuplicateTanks() {

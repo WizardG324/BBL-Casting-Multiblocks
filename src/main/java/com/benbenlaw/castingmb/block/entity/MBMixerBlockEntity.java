@@ -200,6 +200,9 @@ public class MBMixerBlockEntity extends SyncableBlockEntity implements MenuProvi
                 remaining -= handler.insert(i, FluidResource.of(outputStack), remaining, tx);
             }
 
+            // All or nothing, committing a partial insert would consume the inputs and void the rest
+            if (remaining > 0) return;
+
             tx.commit();
         }
 
