@@ -137,7 +137,7 @@ public class MBSolidifierBlockEntity extends SyncableBlockEntity implements Menu
         MBTankBlockEntity coolantTank = getCoolestFuelTank();
 
         BlockPos coolantPos = coolantTank != null ? coolantTank.getBlockPos() : null;
-        if (!java.util.Objects.equals(coolantPos, lastSyncedFuelTankPos)) {
+        if (!java.util.Objects.equals(coolantPos, lastSyncedFuelTankPos) || level.getGameTime() % 100 == 0) {
             lastSyncedFuelTankPos = coolantPos;
             PacketDistributor.sendToAllPlayers(new SyncFuelTanks(this.worldPosition, coolantPos));
         }
