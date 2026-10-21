@@ -17,6 +17,9 @@ public class CastingMBMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<MBSolidifierMenu>> MB_SOLIDIFIER_MENU =
             MENUS.register("mb_solidifier_menu", () -> IMenuTypeExtension.create(MBSolidifierMenu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<MBInterfaceMenu>> MB_INTERFACE_MENU =
+            MENUS.register("mb_interface_menu", () -> IMenuTypeExtension.create(MBInterfaceMenu::new));
+
     public static final DeferredHolder<MenuType<?>, MenuType<MBMixerMenu>> MB_MIXER_MENU =
             MENUS.register("mb_mixer_menu", () -> IMenuTypeExtension.create(MBMixerMenu::new));
 

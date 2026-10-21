@@ -2,18 +2,27 @@ package com.benbenlaw.castingmb.block.entity;
 
 import com.benbenlaw.casting.item.FluidMoverItem;
 import com.benbenlaw.castingmb.block.CastingMBBlockEntities;
+import com.benbenlaw.castingmb.block.entity.handler.InterfaceFluidHandler;
 import com.benbenlaw.castingmb.block.entity.handler.InterfaceItemHandler;
+import com.benbenlaw.castingmb.screen.MBInterfaceMenu;
 import com.benbenlaw.core.block.entity.SyncableBlockEntity;
+import com.benbenlaw.core.block.entity.WhitelistBlockEntity;
+import com.benbenlaw.core.block.entity.handler.fluid.FilterFluidHandler;
 import com.benbenlaw.core.block.entity.handler.fluid.SyncableFluidHandler;
+import com.benbenlaw.core.block.entity.handler.item.FilterItemHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
@@ -25,12 +34,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class MBInterfaceBlockEntity extends SyncableBlockEntity {
+public class MBInterfaceBlockEntity extends SyncableBlockEntity implements MenuProvider, WhitelistBlockEntity {
 
     private MBControllerBlockEntity cachedController;
     private BlockPos controllerPos;
 
     private final InterfaceItemHandler itemHandler = new InterfaceItemHandler(this);
+    private final InterfaceFluidHandler filteredFluids = new InterfaceFluidHandler(this);
+
+    private final FilterItemHandler itemFilter = new FilterItemHandler(this, 8);
+    private final FilterFluidHandler fluidFilter = new FilterFluidHandler(this, 8);
+    private boolean itemWhitelist = true;
+    private boolean fluidWhitelist = true;
 
     // Rebuilt at most once a tick
     private List<MBSolidifierBlockEntity> solidifiers = List.of();
@@ -146,9 +161,39 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
         return found;
     }
 
-    public @Nullable FluidStacksResourceHandler getFluidHandler() {
+    public @Nullable ResourceHandler<FluidResource> getFluidHandler() {
+        return getController() != null ? filteredFluids : null;
+    }
+
+    public @Nullable ResourceHandler<FluidResource> controllerFluids() {
         MBControllerBlockEntity controller = getController();
         return controller != null ? controller.getFluidHandler() : null;
+    }
+
+    public boolean allowsItem(ItemResource resource) {
+        return itemFilter.matchesItem(resource.toStack(), itemWhitelist);
+    }
+
+    public boolean allowsFluid(FluidResource resource) {
+        return fluidFilter.matchesFluid(resource, fluidWhitelist, true);
+    }
+
+    public FilterItemHandler getItemFilter() { return itemFilter; }
+
+    public FilterFluidHandler getFluidFilter() { return fluidFilter; }
+
+    @Override
+    public boolean isWhitelist() { return itemWhitelist; }
+
+    @Override
+    public void setWhitelist(boolean whitelist) { this.itemWhitelist = whitelist; }
+
+    public boolean isFluidWhitelist() { return fluidWhitelist; }
+
+    public void setFluidWhitelist(boolean whitelist) {
+        this.fluidWhitelist = whitelist;
+        setChanged();
+        sync();
     }
 
     public boolean onPlayerUse(Player player, InteractionHand hand) {
@@ -174,6 +219,10 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     protected void saveAdditional(ValueOutput output) {
+        itemFilter.serialize(output.child("itemFilter"));
+        fluidFilter.serialize(output.child("fluidFilter"));
+        output.putBoolean("itemWhitelist", itemWhitelist);
+        output.putBoolean("fluidWhitelist", fluidWhitelist);
         if (controllerPos != null) {
             output.putLong("controller_pos", controllerPos.asLong());
         }
@@ -182,6 +231,10 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     protected void loadAdditional(ValueInput input) {
+        itemFilter.deserialize(input.childOrEmpty("itemFilter"));
+        fluidFilter.deserialize(input.childOrEmpty("fluidFilter"));
+        itemWhitelist = input.getBooleanOr("itemWhitelist", true);
+        fluidWhitelist = input.getBooleanOr("fluidWhitelist", true);
         long posLong = input.getLongOr("controller_pos", 0);
         if (posLong != 0) {
             this.controllerPos = BlockPos.of(posLong);
@@ -191,5 +244,15 @@ public class MBInterfaceBlockEntity extends SyncableBlockEntity {
 
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int container, Inventory inventory, Player player) {
+        return new MBInterfaceMenu(container, inventory, this.worldPosition);
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.castingmb.mb_interface");
     }
 }

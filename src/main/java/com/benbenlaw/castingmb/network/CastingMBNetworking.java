@@ -3,6 +3,7 @@ package com.benbenlaw.castingmb.network;
 import com.benbenlaw.castingmb.CastingMB;
 import com.benbenlaw.castingmb.network.packets.ChangeMoldPagePacket;
 import com.benbenlaw.castingmb.network.packets.SelectMixerRecipePacket;
+import com.benbenlaw.castingmb.network.packets.SyncInterfaceFluidWhitelist;
 import com.benbenlaw.castingmb.network.packets.SyncFuelTanks;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -16,6 +17,7 @@ public class CastingMBNetworking {
         registrar.playToClient(SyncFuelTanks.TYPE, SyncFuelTanks.STREAM_CODEC, SyncFuelTanks.HANDLER);
 
         registrar.playToServer(SelectMixerRecipePacket.TYPE, SelectMixerRecipePacket.STREAM_CODEC, SelectMixerRecipePacket.HANDLER);
+        registrar.playToServer(SyncInterfaceFluidWhitelist.TYPE, SyncInterfaceFluidWhitelist.STREAM_CODEC, SyncInterfaceFluidWhitelist.HANDLER);
         registrar.playToServer(ChangeMoldPagePacket.TYPE, ChangeMoldPagePacket.STREAM_CODEC, ChangeMoldPagePacket.HANDLER);
     }
 

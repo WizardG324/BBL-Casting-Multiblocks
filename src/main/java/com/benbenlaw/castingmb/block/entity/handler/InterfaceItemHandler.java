@@ -18,7 +18,6 @@ public class InterfaceItemHandler implements ResourceHandler<ItemResource> {
 
     private record Target(ResourceHandler<ItemResource> handler, int slot, boolean solidifier) {}
 
-    /** The handler and slot behind an interface slot, or null for an index that no longer exists */
     private @Nullable Target resolve(int index) {
         ResourceHandler<ItemResource> controller = owner.controllerItems();
         int controllerSlots = controller == null ? 0 : controller.size();
@@ -56,19 +55,20 @@ public class InterfaceItemHandler implements ResourceHandler<ItemResource> {
     @Override
     public boolean isValid(int index, ItemResource resource) {
         Target target = resolve(index);
-        return target != null && target.handler().isValid(target.slot(), resource);
+        return target != null && owner.allowsItem(resource) && target.handler().isValid(target.slot(), resource);
     }
 
     @Override
     public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
         Target target = resolve(index);
-        return target == null ? 0 : target.handler().insert(target.slot(), resource, amount, transaction);
+        if (target == null || !owner.allowsItem(resource)) return 0;
+        return target.handler().insert(target.slot(), resource, amount, transaction);
     }
 
     @Override
     public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
         Target target = resolve(index);
-        if (target == null) return 0;
+        if (target == null || !owner.allowsItem(resource)) return 0;
 
         int extracted = target.handler().extract(target.slot(), resource, amount, transaction);
         if (extracted > 0 && target.solidifier()) {

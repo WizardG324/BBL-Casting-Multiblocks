@@ -13,6 +13,8 @@
   "tooltip.castingmb.empty": "Empty",
   "tooltip.castingmb.empty_space": "Free Space",
   "tooltip.castingmb.entity_melting": "Deals %s damage per %s ticks",
+  "tooltip.castingmb.interface.fluid_filter": "Fluid Filter",
+  "tooltip.castingmb.interface.item_filter": "Item Filter",
   "tooltip.castingmb.no_fuel_cold_mb": "No Fuel Tanks with cold enough fuel found in the multiblock structure, add to speed up solidifiers!",
   "tooltip.castingmb.no_fuel_mb": "No Fuel Tanks with hot enough fuel found in the multiblock structure!",
   "tooltip.castingmb.stacked": "Stacked: %s"

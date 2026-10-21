@@ -34,6 +34,8 @@ public class CastingMBLangProvider extends LanguageProvider {
         add("tooltip.castingmb.no_fuel_cold_mb", "No Fuel Tanks with cold enough fuel found in the multiblock structure, add to speed up solidifiers!");
         add("tooltip.castingmb.entity_melting", "Deals %s damage per %s ticks");
         add("tooltip.castingmb.click_to_remove", "Click to remove set recipe");
+        add("tooltip.castingmb.interface.item_filter", "Item Filter");
+        add("tooltip.castingmb.interface.fluid_filter", "Fluid Filter");
 
         //JEI
         add("jei.castingmb.entity_melting", "Entity Melting");

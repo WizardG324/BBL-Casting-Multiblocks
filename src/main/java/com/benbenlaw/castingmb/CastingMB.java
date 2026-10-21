@@ -11,6 +11,7 @@ import com.benbenlaw.castingmb.network.CastingMBNetworking;
 import com.benbenlaw.castingmb.recipe.CastingMBRecipeTypes;
 import com.benbenlaw.castingmb.screen.CastingMBMenuTypes;
 import com.benbenlaw.castingmb.screen.MBControllerScreen;
+import com.benbenlaw.castingmb.screen.MBInterfaceScreen;
 import com.benbenlaw.castingmb.screen.MBMixerScreen;
 import com.benbenlaw.castingmb.screen.MBSolidifierScreen;
 import net.minecraft.resources.Identifier;
@@ -66,6 +67,7 @@ public class CastingMB {
             event.register(CastingMBMenuTypes.MB_CONTROLLER_MENU.get(), MBControllerScreen::new);
             event.register(CastingMBMenuTypes.MB_SOLIDIFIER_MENU.get(), MBSolidifierScreen::new);
             event.register(CastingMBMenuTypes.MB_MIXER_MENU.get(), MBMixerScreen::new);
+            event.register(CastingMBMenuTypes.MB_INTERFACE_MENU.get(), MBInterfaceScreen::new);
         }
 
         /*
