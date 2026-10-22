@@ -97,7 +97,8 @@ public class MBSolidifierBlockEntity extends SyncableBlockEntity implements Menu
                     case 2 -> MBSolidifierBlockEntity.this.temperature.orElse(Integer.MIN_VALUE);
                     case 3 -> {
                         var controller = getController();
-                        yield (controller != null) ? controller.cachedMultiblockData.volume() : 0;
+                        yield (controller != null &&
+                                controller.cachedMultiblockData != null) ? controller.cachedMultiblockData.volume() : 0;
                     }
                     default -> 0;
                 };
